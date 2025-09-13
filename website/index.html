@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>11Kölsch - Kölsch Trink-App</title>
+    <meta name="description" content="11Kölsch - Die ultimative App für Kölsch-Liebhaber. Tracke deine Kölsch, finde Locations und verbinde dich mit Freunden.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>11Kölsch</h1>
+                    <div class="beer-icon">🍺</div>
+                </div>
+                <nav class="nav">
+                    <a href="#home" class="nav-link active">Home</a>
+                    <a href="#features" class="nav-link">Features</a>
+                    <a href="#download" class="nav-link">Download</a>
+                    <a href="#contact" class="nav-link">Kontakt</a>
+                </nav>
+                <div class="auth-buttons">
+                    <button id="loginBtn" class="btn-secondary">Anmelden</button>
+                    <button id="registerBtn" class="btn-primary">Registrieren</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Hero Section -->
+            <section id="home" class="hero">
+                <div class="hero-content">
+                    <h2>Die ultimative Kölsch-App</h2>
+                    <p>Tracke deine Kölsch, finde die besten Locations und verbinde dich mit anderen Kölsch-Liebhabern.</p>
+                    <div class="hero-buttons">
+                        <button class="btn-primary large" onclick="scrollToDownload()">App herunterladen</button>
+                        <button class="btn-secondary large" onclick="scrollToFeatures()">Mehr erfahren</button>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <div class="phone-mockup">
+                        <div class="phone-screen">
+                            <div class="app-preview">
+                                <div class="beer-counter">
+                                    <span class="number">11</span>
+                                    <span class="label">Kölsch getrunken</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section id="features" class="features">
+                <div class="container">
+                    <h2>Features</h2>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">📊</div>
+                            <h3>Kölsch-Tracking</h3>
+                            <p>Verfolge deine Kölsch-Konsum und erstelle Statistiken über deine Trinkgewohnheiten.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🗺️</div>
+                            <h3>Location-Finder</h3>
+                            <p>Finde die besten Kölsch-Locations in deiner Nähe und entdecke neue Brauereien.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">👥</div>
+                            <h3>Freunde</h3>
+                            <p>Verbinde dich mit Freunden und vergleiche eure Kölsch-Erfahrungen.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🏆</div>
+                            <h3>Achievements</h3>
+                            <p>Sammle Abzeichen und erreiche Meilensteine in deiner Kölsch-Reise.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Download Section -->
+            <section id="download" class="download">
+                <div class="container">
+                    <h2>App herunterladen</h2>
+                    <p>Verfügbar für iOS und bald auch für Android</p>
+                    <div class="download-buttons">
+                        <a href="#" class="download-btn ios" onclick="downloadIOS()">
+                            <div class="download-icon">📱</div>
+                            <div class="download-text">
+                                <span class="download-label">Download für</span>
+                                <span class="download-platform">iOS</span>
+                            </div>
+                        </a>
+                        <a href="#" class="download-btn android disabled">
+                            <div class="download-icon">🤖</div>
+                            <div class="download-text">
+                                <span class="download-label">Bald verfügbar für</span>
+                                <span class="download-platform">Android</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contact Section -->
+            <section id="contact" class="contact">
+                <div class="container">
+                    <h2>Kontakt</h2>
+                    <div class="contact-content">
+                        <div class="contact-info">
+                            <h3>Hast du Fragen?</h3>
+                            <p>Wir helfen dir gerne weiter!</p>
+                            <div class="contact-methods">
+                                <div class="contact-method">
+                                    <span class="contact-icon">📧</span>
+                                    <span>support@11koelsch.de</span>
+                                </div>
+                                <div class="contact-method">
+                                    <span class="contact-icon">🐦</span>
+                                    <span>@11koelsch</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="contact-form">
+                            <form id="contactForm">
+                                <div class="form-group">
+                                    <input type="text" id="contactName" placeholder="Dein Name" required>
+                                </div>
+                                <div class="form-group">
+                                    <input type="email" id="contactEmail" placeholder="Deine E-Mail" required>
+                                </div>
+                                <div class="form-group">
+                                    <textarea id="contactMessage" placeholder="Deine Nachricht" rows="5" required></textarea>
+                                </div>
+                                <button type="submit" class="btn-primary">Nachricht senden</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h3>11Kölsch</h3>
+                        <p>Die ultimative App für Kölsch-Liebhaber</p>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Links</h4>
+                        <ul>
+                            <li><a href="#home">Home</a></li>
+                            <li><a href="#features">Features</a></li>
+                            <li><a href="#download">Download</a></li>
+                            <li><a href="#contact">Kontakt</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Rechtliches</h4>
+                        <ul>
+                            <li><a href="/privacy">Datenschutz</a></li>
+                            <li><a href="/terms">Nutzungsbedingungen</a></li>
+                            <li><a href="/imprint">Impressum</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 11Kölsch. Alle Rechte vorbehalten.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Auth Modals -->
+    <div id="authModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeAuthModal()">&times;</span>
+            
+            <!-- Login Form -->
+            <div id="loginForm" class="auth-form">
+                <h2>Anmelden</h2>
+                <form id="loginFormElement">
+                    <div class="form-group">
+                        <input type="email" id="loginEmail" placeholder="E-Mail" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="loginPassword" placeholder="Passwort" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Anmelden</button>
+                </form>
+                <p class="auth-switch">
+                    Noch kein Konto? <a href="#" onclick="showRegisterForm()">Registrieren</a>
+                </p>
+            </div>
+
+            <!-- Register Form -->
+            <div id="registerForm" class="auth-form" style="display: none;">
+                <h2>Registrieren</h2>
+                <form id="registerFormElement">
+                    <div class="form-group">
+                        <input type="text" id="registerFirstName" placeholder="Vorname" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="registerLastName" placeholder="Nachname" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="registerEmail" placeholder="E-Mail" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="registerPassword" placeholder="Passwort" required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="registerPasswordConfirm" placeholder="Passwort bestätigen" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Registrieren</button>
+                </form>
+                <p class="auth-switch">
+                    Bereits ein Konto? <a href="#" onclick="showLoginForm()">Anmelden</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Messages -->
+    <div id="toast" class="toast"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
