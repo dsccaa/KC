@@ -115,10 +115,10 @@ class LiveAuthManager: ObservableObject {
                 ) {
                     await MainActor.run {
                         self.isLoading = false
-                        // User ist registriert, aber noch nicht bestätigt
-                        // E-Mail-Bestätigung wird automatisch gesendet
-                        print("✅ LiveAuthManager: E-Mail Registrierung erfolgreich - Bestätigungs-E-Mail gesendet")
-                        completion(true, "Bitte bestätige deine E-Mail-Adresse. Wir haben dir eine Bestätigungs-E-Mail gesendet.")
+                        self.currentUser = user
+                        self.isAuthenticated = true
+                        print("✅ LiveAuthManager: E-Mail Registrierung erfolgreich")
+                        completion(true, "Registrierung erfolgreich! Du kannst dich jetzt anmelden.")
                     }
                 } else {
                     await MainActor.run {
