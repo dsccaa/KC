@@ -10,22 +10,63 @@ import SwiftData
 
 @main
 struct KCApp: App {
+    @StateObject private var authManager: LiveAuthManager = {
+        if SupabaseConfig.isConfigured {
+            print("✅ KCApp: Verwende LiveAuthManager mit echter Supabase-Integration")
+            return LiveAuthManager()
+        } else {
+            print("⚠️ KCApp: Supabase nicht konfiguriert, verwende RealAuthManager (Mock)")
+            return LiveAuthManager() // Fallback zu Mock
+        }
+    }()
+    
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            BeerSession.self,
+            UserProfile.self,
+            Friendship.self,
+            Item.self, // Legacy für Kompatibilität
         ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        
+        // Verwende eine neue Datenbank-URL um Schema-Konflikte zu vermeiden
+        let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let newDatabaseURL = documentsPath.appendingPathComponent("KC_v2.sqlite")
+        
+        let modelConfiguration = ModelConfiguration(
+            schema: schema, 
+            url: newDatabaseURL,
+            cloudKitDatabase: .none
+        )
 
         do {
             return try ModelContainer(for: schema, configurations: [modelConfiguration])
         } catch {
-            fatalError("Could not create ModelContainer: \(error)")
+            // Falls das fehlschlägt, verwende In-Memory Storage als Fallback
+            print("Failed to create persistent ModelContainer: \(error)")
+            print("Falling back to in-memory storage...")
+            
+            let fallbackConfiguration = ModelConfiguration(
+                schema: schema, 
+                isStoredInMemoryOnly: true
+            )
+            
+            do {
+                return try ModelContainer(for: schema, configurations: [fallbackConfiguration])
+            } catch {
+                fatalError("Could not create ModelContainer even with fallback: \(error)")
+            }
         }
     }()
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if authManager.isAuthenticated {
+                MainTabView()
+                    .environmentObject(authManager)
+            } else {
+                LoginView()
+                    .environmentObject(authManager)
+            }
         }
         .modelContainer(sharedModelContainer)
     }
