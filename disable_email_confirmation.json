@@ -1,3 +1,0 @@
-{
-  "query": "UPDATE auth.config SET raw_config = jsonb_set(raw_config, '{ENABLE_EMAIL_CONFIRMATIONS}', 'false') WHERE id = 1;"
-}

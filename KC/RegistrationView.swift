@@ -216,7 +216,9 @@ struct RegistrationView: View {
             firstName: firstName
         ) { success, error in
             if success {
-                showingSuccess = true
+                // Zeige E-Mail-Bestätigungsnachricht
+                confirmationMessage = error ?? "Bitte bestätige deine E-Mail-Adresse. Wir haben dir eine Bestätigungs-E-Mail gesendet."
+                showingEmailConfirmation = true
             } else {
                 errorMessage = error ?? "Fehler bei der Registrierung"
                 showingError = true

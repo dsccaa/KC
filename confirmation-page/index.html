@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Mail bestätigt - 11Kölsch</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="confirmation-card">
+            <!-- Logo -->
+            <div class="logo">
+                <h1>11Kölsch</h1>
+                <div class="beer-icon">🍺</div>
+            </div>
+
+            <!-- Success Message -->
+            <div class="success-message" id="successMessage" style="display: none;">
+                <div class="success-icon">✅</div>
+                <h2>E-Mail erfolgreich bestätigt!</h2>
+                <p>Willkommen bei 11Kölsch! Dein Konto wurde erfolgreich aktiviert.</p>
+                <div class="actions">
+                    <button onclick="openApp()" class="btn-primary">App öffnen</button>
+                    <button onclick="goToLogin()" class="btn-secondary">Zur Anmeldung</button>
+                </div>
+            </div>
+
+            <!-- Error Message -->
+            <div class="error-message" id="errorMessage" style="display: none;">
+                <div class="error-icon">❌</div>
+                <h2>Bestätigung fehlgeschlagen</h2>
+                <p id="errorText">Es gab ein Problem bei der E-Mail-Bestätigung.</p>
+                <div class="actions">
+                    <button onclick="retryConfirmation()" class="btn-primary">Erneut versuchen</button>
+                    <button onclick="goToLogin()" class="btn-secondary">Zur Anmeldung</button>
+                </div>
+            </div>
+
+            <!-- Loading Message -->
+            <div class="loading-message" id="loadingMessage">
+                <div class="spinner"></div>
+                <h2>E-Mail wird bestätigt...</h2>
+                <p>Bitte warten, während wir deine E-Mail-Adresse bestätigen.</p>
+            </div>
+
+            <!-- Manual Code Input -->
+            <div class="manual-code" id="manualCode" style="display: none;">
+                <h3>Bestätigungscode eingeben</h3>
+                <p>Falls der automatische Bestätigungslink nicht funktioniert hat, gib hier deinen Bestätigungscode ein:</p>
+                <div class="code-input">
+                    <input type="text" id="confirmationCode" placeholder="6-stelliger Code" maxlength="6">
+                    <button onclick="confirmWithCode()" class="btn-primary">Bestätigen</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>© 2025 11Kölsch - Kölsch Trink-App</p>
+            <p>Bei Problemen kontaktiere uns unter: support@11koelsch.de</p>
+        </div>
+    </div>
+
+    <script>
+        // Supabase-Konfiguration
+        const supabaseUrl = 'https://nrkjjukeracgbpvwbjam.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ya2pqdWtlcmFjZ2JwdndiamFtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYwNTU2OTAsImV4cCI6MjA3MTYzMTY5MH0.9NtxeNVLNwcTSgNq6ug1aedvvz9oBC3SqRB3sahkhEU';
+        
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        // URL-Parameter extrahieren
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        const type = urlParams.get('type');
+
+        // Beim Laden der Seite
+        document.addEventListener('DOMContentLoaded', function() {
+            if (token && type === 'signup') {
+                confirmEmail(token);
+            } else {
+                showManualCode();
+            }
+        });
+
+        // E-Mail bestätigen
+        async function confirmEmail(token) {
+            try {
+                const { data, error } = await supabase.auth.verifyOtp({
+                    token: token,
+                    type: 'signup'
+                });
+
+                if (error) {
+                    throw error;
+                }
+
+                // Erfolg
+                showSuccess();
+                
+                // Optional: User-Informationen anzeigen
+                if (data.user) {
+                    console.log('User bestätigt:', data.user.email);
+                }
+
+            } catch (error) {
+                console.error('Bestätigungsfehler:', error);
+                showError(error.message);
+            }
+        }
+
+        // Mit Code bestätigen
+        async function confirmWithCode() {
+            const code = document.getElementById('confirmationCode').value;
+            
+            if (!code || code.length !== 6) {
+                showError('Bitte gib einen 6-stelligen Code ein.');
+                return;
+            }
+
+            try {
+                const { data, error } = await supabase.auth.verifyOtp({
+                    token: code,
+                    type: 'signup'
+                });
+
+                if (error) {
+                    throw error;
+                }
+
+                showSuccess();
+
+            } catch (error) {
+                console.error('Bestätigungsfehler:', error);
+                showError(error.message);
+            }
+        }
+
+        // Erfolg anzeigen
+        function showSuccess() {
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('manualCode').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'block';
+        }
+
+        // Fehler anzeigen
+        function showError(message) {
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+            document.getElementById('manualCode').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('errorText').textContent = message;
+        }
+
+        // Manuellen Code anzeigen
+        function showManualCode() {
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('manualCode').style.display = 'block';
+        }
+
+        // App öffnen
+        function openApp() {
+            // Versuche die App zu öffnen
+            const appUrl = '11koelsch://confirm';
+            window.location.href = appUrl;
+            
+            // Fallback: Nach 2 Sekunden zur Website
+            setTimeout(() => {
+                window.location.href = 'https://11koelsch.de';
+            }, 2000);
+        }
+
+        // Zur Anmeldung
+        function goToLogin() {
+            window.location.href = 'https://11koelsch.de/login';
+        }
+
+        // Erneut versuchen
+        function retryConfirmation() {
+            window.location.reload();
+        }
+    </script>
+</body>
+</html>
